@@ -43,6 +43,14 @@ public class HyphenationJpn : UIBehaviour
 
 	}
 
+	protected override void OnValidate()
+	{
+		base.OnValidate();
+		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
+		
+		UpdateText(text);
+	}
+
 	void UpdateText(string str)
 	{
 		// update Text
