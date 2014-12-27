@@ -35,7 +35,7 @@ public class HyphenationJpn : UIBehaviour
 	}
 	private Text _text;
 
-	protected void OnRectTransformDimensionsChange ()
+	protected override void OnRectTransformDimensionsChange ()
 	{
 		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
 
