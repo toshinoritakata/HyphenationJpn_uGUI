@@ -15,8 +15,6 @@ public class HyphenationJpn : UIBehaviour
 	[TextArea(3,10), SerializeField]
 	private string text;
 
-	private float spaceSize;
-
 	public bool updateEditorOnly = true;
 
 	private RectTransform _RectTransform{
@@ -43,7 +41,6 @@ public class HyphenationJpn : UIBehaviour
 		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
 
 		UpdateText(text);
-
 	}
 
 	protected override void OnValidate()
@@ -57,61 +54,64 @@ public class HyphenationJpn : UIBehaviour
 	void UpdateText(string str)
 	{
 		// update Text
-		_Text.text = SetText(_Text, str);
+		_Text.text = GetFormatedText(_Text, str);
 	}
 	
-	public void SetText(string str)
+	public void GetText(string str)
 	{
 		text = str;
 		UpdateText(text);
 	}
 
+	float GetSpaceWidth(Text textComp)
+	{
+		float tmp0 = GetTextWidth(textComp, "m m");
+		float tmp1 = GetTextWidth(textComp, "mm");
+		return (tmp0 - tmp1);
+	}
 
-	string SetText(Text textComp, string msg)
+	float GetTextWidth(Text textComp, string message)
+	{
+		textComp.text = message;
+		return textComp.preferredWidth;
+	}
+
+	string GetFormatedText(Text textComp, string msg)
 	{
 		if(string.IsNullOrEmpty(msg)){
 			return string.Empty;
 		}
 		
 		float rectWidth = _RectTransform.rect.width;
+		float spaceCharacterWidth = GetSpaceWidth(textComp);
 
-		// get space width
-		textComp.text = "m m";
-		float tmp0 = textComp.preferredWidth;
-		textComp.text = "mm";
-		float tmp1 = textComp.preferredWidth;
-		spaceSize = (tmp0 - tmp1);
-		
 		// override
 		textComp.horizontalOverflow = HorizontalWrapMode.Overflow;
 
-
 		// work
-		StringBuilder line = new StringBuilder();
+		StringBuilder lineBuilder = new StringBuilder();
 
-		float lineW = 0;
-		foreach( var word in GetWordList(msg))
+		float lineWidth = 0;
+		foreach( var originalLine in GetWordList(msg))
 		{
-			textComp.text = word;
-			lineW += textComp.preferredWidth;
+			lineWidth += GetTextWidth(textComp, originalLine);
 
-			if( word == Environment.NewLine ){
-				lineW = 0;
+			if( originalLine == Environment.NewLine ){
+				lineWidth = 0;
 			}else{
-				if( word == " " ){
-					lineW += spaceSize;
+				if( originalLine == " " ){
+					lineWidth += spaceCharacterWidth;
 				}
 
-				if( lineW > rectWidth ){
-					line.Append( Environment.NewLine );
-					textComp.text = word;
-					lineW = textComp.preferredWidth;
+				if( lineWidth > rectWidth ){
+					lineBuilder.Append( Environment.NewLine );
+					lineWidth = GetTextWidth(textComp, originalLine);
 				}
 			}
-			line.Append( word );
+			lineBuilder.Append( originalLine );
 		}
 
-		return line.ToString();
+		return lineBuilder.ToString();
 	}
 
 	private List<string> GetWordList(string tmpText)
@@ -122,7 +122,7 @@ public class HyphenationJpn : UIBehaviour
 
 		for(int characterCount = 0; characterCount < tmpText.Length; characterCount ++)
 		{
-			char currentCharacter = tmpText[characterCount];//single Charactor
+			char currentCharacter = tmpText[characterCount];
 			char nextCharacter = (characterCount < tmpText.Length-1) ? tmpText[characterCount+1] : emptyChar;
 			char preCharacter = (characterCount > 0) ? preCharacter = tmpText[characterCount-1] : emptyChar;
 
@@ -170,7 +170,10 @@ public class HyphenationJpn : UIBehaviour
 		 "?!！？‼⁇⁈⁉" +//区切り約物
 		 "・:;" +//中点類
 		 "。.").ToCharArray();//句点類
-	private static char[] HYP_BACK = "(（[｛〔〈《「『【〘〖〝‘“｟«".ToCharArray();//始め括弧類
+
+	private static char[] HYP_BACK = 
+		 "(（[｛〔〈《「『【〘〖〝‘“｟«".ToCharArray();//始め括弧類
+
 	private static char[] HYP_LATIN = 
 		("abcdefghijklmnopqrstuvwxyz" +
 	     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 
