@@ -122,26 +122,26 @@ public class HyphenationJpn : UIBehaviour
 		StringBuilder line = new StringBuilder();
 		for(int j = 0; j < tmpText.Length; j ++){
 
-			string str = tmpText[j].ToString();//single Charactor
-			string nextStr = string.Empty;
+			char currentCharacter = tmpText[j];//single Charactor
+			char nextCharacter = new char();
 			if(j < tmpText.Length-1){
-				nextStr = tmpText[j+1].ToString();
+				nextCharacter = tmpText[j+1];
 			}
-			string preStr = string.Empty;
+			char preCharacter = new char();
 			if(j > 0){
-				preStr = tmpText[j-1].ToString();
+				preCharacter = tmpText[j-1];
 			}
 
-			if( IsLatin(str) && !IsLatin(preStr) ){
+			if( IsLatin(currentCharacter) && !IsLatin(preCharacter) ){
 				words.Add(line.ToString());
 				line = new StringBuilder();
 				continue;
 			}
 
-			line.Append( str );
+			line.Append( currentCharacter );
 			
-			if( (!IsLatin(str) && CHECK_HYP_BACK(preStr)) ||
-			    (!IsLatin(nextStr) && !CHECK_HYP_FRONT(nextStr) && !CHECK_HYP_BACK(str))||
+			if( (!IsLatin(currentCharacter) && CHECK_HYP_BACK(preCharacter)) ||
+			    (!IsLatin(nextCharacter) && !CHECK_HYP_FRONT(nextCharacter) && !CHECK_HYP_BACK(currentCharacter))||
 			    (j == tmpText.Length - 1)){
 				words.Add(line.ToString());
 				line = new StringBuilder();
@@ -174,26 +174,32 @@ public class HyphenationJpn : UIBehaviour
 
 	// 禁則処理 http://ja.wikipedia.org/wiki/%E7%A6%81%E5%89%87%E5%87%A6%E7%90%86
 	// 行頭禁則文字
-	private static string HYP_FRONT = ",)]｝、。）〕〉》」』】〙〗〟’”｠»" +// 終わり括弧類 簡易版
-		"ァィゥェォッャュョヮヵヶっぁぃぅぇぉっゃゅょゎ" +//行頭禁則和字 
-			"‐゠–〜ー" +//ハイフン類
-			"?!‼⁇⁈⁉" +//区切り約物
-			"・:;" +//中点類
-			"。.";//句点類
-	private static string HYP_BACK = "([｛〔〈《「『【〘〖〝‘“｟«";//始め括弧類
+	private static char[] HYP_FRONT = 
+		(",)]｝、。）〕〉》」』】〙〗〟’”｠»" +// 終わり括弧類 簡易版
+		 "ァィゥェォッャュョヮヵヶっぁぃぅぇぉっゃゅょゎ" +//行頭禁則和字 
+		 "‐゠–〜ー" +//ハイフン類
+		 "?!‼⁇⁈⁉" +//区切り約物
+		 "・:;" +//中点類
+		 "。.").ToCharArray();//句点類
+	private static char[] HYP_BACK = "([｛〔〈《「『【〘〖〝‘“｟«".ToCharArray();//始め括弧類
+	private static char[] HYP_LATIN = 
+		("abcdefghijklmnopqrstuvwxyz" +
+	     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 
+	     "0123456789" + 
+	     "<>().,]").ToCharArray();
 
-	private static bool CHECK_HYP_FRONT(string str)
+	private static bool CHECK_HYP_FRONT(char str)
 	{
-		return HYP_FRONT.Contains(str);
+		return Array.Exists<char>(HYP_FRONT, item => item == str);
 	}
 
-	private static bool CHECK_HYP_BACK(string str)
+	private static bool CHECK_HYP_BACK(char str)
 	{
-		return HYP_BACK.Contains(str);
+		return Array.Exists<char>(HYP_BACK, item => item == str);
 	}
 
-	private static bool IsLatin(string s)
+	private static bool IsLatin(char s)
 	{
-		return Regex.IsMatch(s, @"^[a-zA-Z0-9<>().,]+$");
+		return Array.Exists<char>(HYP_LATIN, item => item == s);
 	}
 }
