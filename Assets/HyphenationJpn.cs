@@ -84,7 +84,7 @@ public class HyphenationJpn : UIBehaviour
 
 
 		// work
-		string str = string.Empty;
+		StringBuilder line = new StringBuilder();
 
 		List<string> wordList = GetWordList(msg);
 		
@@ -94,22 +94,22 @@ public class HyphenationJpn : UIBehaviour
 			textComp.text = wordList[i];
 			lineW += textComp.preferredWidth;
 
-			if(wordList[i] == NEWLINE_CHARA){
+			if(wordList[i] == Environment.NewLine){
 				lineW = 0;
 			}else{
 				if(wordList[i] == " "){
 					lineW += spaceSize;
 				}
 				if(lineW > w){
-					str += NEWLINE_CHARA;
+					line.Append( Environment.NewLine );
 					textComp.text = wordList[i];
 					lineW = textComp.preferredWidth;
 				}
 			}
-			str += wordList[i];
+			line.Append( wordList[i] );
 		}
 		
-		return str;
+		return line.ToString();
 	}
 
 	private List<string> GetWordList(string tmpText)
