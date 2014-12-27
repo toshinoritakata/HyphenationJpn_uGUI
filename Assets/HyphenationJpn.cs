@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using UnityEngine.EventSystems;
+using System.Text;
+using System;
 
 [RequireComponent(typeof(Text))]
 [ExecuteInEditMode]
 public class HyphenationJpn : UIBehaviour
 {
 	// http://answers.unity3d.com/questions/424874/showing-a-textarea-field-for-a-string-variable-in.html
-	[TextArea(3,10)]
-	public string text;
+	[TextArea(3,10), SerializeField]
+	private string text;
 
 	private float spaceSize;
 
@@ -37,6 +39,7 @@ public class HyphenationJpn : UIBehaviour
 
 	protected override void OnRectTransformDimensionsChange ()
 	{
+		base.OnRectTransformDimensionsChange();
 		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
 
 		UpdateText(text);
@@ -116,7 +119,7 @@ public class HyphenationJpn : UIBehaviour
 	{
 		List<string> words = new List<string>();
 		
-		string word = string.Empty;
+		StringBuilder line = new StringBuilder();
 		for(int j = 0; j < tmpText.Length; j ++){
 
 			string str = tmpText[j].ToString();//single Charactor
@@ -130,25 +133,19 @@ public class HyphenationJpn : UIBehaviour
 			}
 
 			if( IsLatin(str) && !IsLatin(preStr) ){
-				words.Add(word);
-				word = "";
+				words.Add(line.ToString());
+				line = new StringBuilder();
+				continue;
 			}
 
-			word += str;
+			line.Append( str );
 			
-			if( !IsLatin(str) && CHECK_HYP_BACK(preStr) ){
-				words.Add(word);
-				word = "";
-			}
-
-			if( (!IsLatin(nextStr) && !CHECK_HYP_FRONT(nextStr) && !CHECK_HYP_BACK(str)) ){
-				words.Add(word);
-				word = "";
-			}
-
-			if(j == tmpText.Length - 1){
-				// end
-				words.Add(word);
+			if( (!IsLatin(str) && CHECK_HYP_BACK(preStr)) ||
+			    (!IsLatin(nextStr) && !CHECK_HYP_FRONT(nextStr) && !CHECK_HYP_BACK(str))||
+			    (j == tmpText.Length - 1)){
+				words.Add(line.ToString());
+				line = new StringBuilder();
+				continue;
 			}
 		}
 		return words;
@@ -175,8 +172,6 @@ public class HyphenationJpn : UIBehaviour
 
 	// static
 
-	private static string NEWLINE_CHARA = "\n";
-
 	// 禁則処理 http://ja.wikipedia.org/wiki/%E7%A6%81%E5%89%87%E5%87%A6%E7%90%86
 	// 行頭禁則文字
 	private static string HYP_FRONT = ",)]｝、。）〕〉》」』】〙〗〟’”｠»" +// 終わり括弧類 簡易版
@@ -185,13 +180,12 @@ public class HyphenationJpn : UIBehaviour
 			"?!‼⁇⁈⁉" +//区切り約物
 			"・:;" +//中点類
 			"。.";//句点類
-	
+	private static string HYP_BACK = "([｛〔〈《「『【〘〖〝‘“｟«";//始め括弧類
+
 	private static bool CHECK_HYP_FRONT(string str)
 	{
 		return HYP_FRONT.Contains(str);
 	}
-	
-	private static string HYP_BACK = "([｛〔〈《「『【〘〖〝‘“｟«";//始め括弧類
 
 	private static bool CHECK_HYP_BACK(string str)
 	{
@@ -200,6 +194,6 @@ public class HyphenationJpn : UIBehaviour
 
 	private static bool IsLatin(string s)
 	{
-		return System.Text.RegularExpressions.Regex.IsMatch(s, @"^[a-zA-Z0-9<>().,]+$");
+		return Regex.IsMatch(s, @"^[a-zA-Z0-9<>().,]+$");
 	}
 }
