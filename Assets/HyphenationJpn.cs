@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Text))]
 [ExecuteInEditMode]
-public class HyphenationJpn : MonoBehaviour
+public class HyphenationJpn : UIBehaviour
 {
 	// http://answers.unity3d.com/questions/424874/showing-a-textarea-field-for-a-string-variable-in.html
 	[TextArea(3,10)]
@@ -34,7 +35,7 @@ public class HyphenationJpn : MonoBehaviour
 	}
 	private Text _text;
 
-	void Update()
+	protected void OnRectTransformDimensionsChange ()
 	{
 		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
 
