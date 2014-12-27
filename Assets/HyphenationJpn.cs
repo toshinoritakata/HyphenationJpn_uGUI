@@ -73,8 +73,8 @@ public class HyphenationJpn : UIBehaviour
 			return string.Empty;
 		}
 		
-		float w = _RectTransform.rect.width;
-		
+		float rectWidth = _RectTransform.rect.width;
+
 		// get space width
 		textComp.text = "m m";
 		float tmp0 = textComp.preferredWidth;
@@ -89,60 +89,49 @@ public class HyphenationJpn : UIBehaviour
 		// work
 		StringBuilder line = new StringBuilder();
 
-		List<string> wordList = GetWordList(msg);
-		
 		float lineW = 0;
-		for(int i = 0; i < wordList.Count; i++){
-
-			textComp.text = wordList[i];
+		foreach( var word in GetWordList(msg))
+		{
+			textComp.text = word;
 			lineW += textComp.preferredWidth;
 
-			if(wordList[i] == Environment.NewLine){
+			if( word == Environment.NewLine ){
 				lineW = 0;
 			}else{
-				if(wordList[i] == " "){
+				if( word == " " ){
 					lineW += spaceSize;
 				}
-				if(lineW > w){
+
+				if( lineW > rectWidth ){
 					line.Append( Environment.NewLine );
-					textComp.text = wordList[i];
+					textComp.text = word;
 					lineW = textComp.preferredWidth;
 				}
 			}
-			line.Append( wordList[i] );
+			line.Append( word );
 		}
-		
+
 		return line.ToString();
 	}
 
 	private List<string> GetWordList(string tmpText)
 	{
 		List<string> words = new List<string>();
-		
 		StringBuilder line = new StringBuilder();
-		for(int j = 0; j < tmpText.Length; j ++){
+		char emptyChar = new char();
 
-			char currentCharacter = tmpText[j];//single Charactor
-			char nextCharacter = new char();
-			if(j < tmpText.Length-1){
-				nextCharacter = tmpText[j+1];
-			}
-			char preCharacter = new char();
-			if(j > 0){
-				preCharacter = tmpText[j-1];
-			}
-
-			if( IsLatin(currentCharacter) && !IsLatin(preCharacter) ){
-				words.Add(line.ToString());
-				line = new StringBuilder();
-				continue;
-			}
+		for(int characterCount = 0; characterCount < tmpText.Length; characterCount ++)
+		{
+			char currentCharacter = tmpText[characterCount];//single Charactor
+			char nextCharacter = (characterCount < tmpText.Length-1) ? tmpText[characterCount+1] : emptyChar;
+			char preCharacter = (characterCount > 0) ? preCharacter = tmpText[characterCount-1] : emptyChar;
 
 			line.Append( currentCharacter );
-			
-			if( (!IsLatin(currentCharacter) && CHECK_HYP_BACK(preCharacter)) ||
+
+			if( ((IsLatin(currentCharacter) && IsLatin(preCharacter) ) &&(IsLatin(currentCharacter) && !IsLatin(preCharacter))) ||
+			    (!IsLatin(currentCharacter) && CHECK_HYP_BACK(preCharacter)) ||
 			    (!IsLatin(nextCharacter) && !CHECK_HYP_FRONT(nextCharacter) && !CHECK_HYP_BACK(currentCharacter))||
-			    (j == tmpText.Length - 1)){
+			    (characterCount == tmpText.Length - 1)){
 				words.Add(line.ToString());
 				line = new StringBuilder();
 				continue;
@@ -178,15 +167,15 @@ public class HyphenationJpn : UIBehaviour
 		(",)]｝、。）〕〉》」』】〙〗〟’”｠»" +// 終わり括弧類 簡易版
 		 "ァィゥェォッャュョヮヵヶっぁぃぅぇぉっゃゅょゎ" +//行頭禁則和字 
 		 "‐゠–〜ー" +//ハイフン類
-		 "?!‼⁇⁈⁉" +//区切り約物
+		 "?!！？‼⁇⁈⁉" +//区切り約物
 		 "・:;" +//中点類
 		 "。.").ToCharArray();//句点類
-	private static char[] HYP_BACK = "([｛〔〈《「『【〘〖〝‘“｟«".ToCharArray();//始め括弧類
+	private static char[] HYP_BACK = "(（[｛〔〈《「『【〘〖〝‘“｟«".ToCharArray();//始め括弧類
 	private static char[] HYP_LATIN = 
 		("abcdefghijklmnopqrstuvwxyz" +
 	     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 
 	     "0123456789" + 
-	     "<>().,]").ToCharArray();
+	     "<>().,").ToCharArray();
 
 	private static bool CHECK_HYP_FRONT(char str)
 	{
