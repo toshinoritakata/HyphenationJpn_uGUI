@@ -16,14 +16,23 @@ public class HyphenationJpn : MonoBehaviour
 
 	public bool updateEditorOnly = true;
 
-	private RectTransform _rectTransform;
-	private Text _text;
-
-	void Start()
-	{
-		_rectTransform = GetComponent<RectTransform>();
-		_text = GetComponent<Text>();
+	private RectTransform _RectTransform{
+		get{
+			if( _rectTransform == null )
+				_rectTransform = GetComponent<RectTransform>();
+			return _rectTransform;
+		}
 	}
+	private RectTransform _rectTransform;
+
+	private Text _Text{
+		get{
+			if( _text == null )
+				_text = GetComponent<Text>();
+			return _text;
+		}
+	}
+	private Text _text;
 
 	void Update()
 	{
@@ -36,7 +45,7 @@ public class HyphenationJpn : MonoBehaviour
 	void UpdateText(string str)
 	{
 		// update Text
-		_text.text = SetText(_text, str);
+		_Text.text = SetText(_Text, str);
 	}
 	
 	public void SetText(string str)
@@ -52,7 +61,7 @@ public class HyphenationJpn : MonoBehaviour
 			return "";
 		}
 		
-		float w = _rectTransform.rect.width;
+		float w = _RectTransform.rect.width;
 		
 		// get space width
 		textComp.text = "m m";
@@ -139,19 +148,19 @@ public class HyphenationJpn : MonoBehaviour
 	// helper
 	public float textWidth{
 		set{
-			_rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value);
+			_RectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value);
 		}
 		get{
-			return _rectTransform.rect.width;
+			return _RectTransform.rect.width;
 		}
 	}
 	public int fontSize
 	{
 		set{
-			_text.fontSize = value;
+			_Text.fontSize = value;
 		}
 		get{
-			return _text.fontSize;
+			return _Text.fontSize;
 		}
 	}
 
