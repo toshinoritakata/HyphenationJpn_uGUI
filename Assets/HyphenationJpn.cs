@@ -16,6 +16,15 @@ public class HyphenationJpn : MonoBehaviour
 
 	public bool updateEditorOnly = true;
 
+	private RectTransform _rectTransform;
+	private Text _text;
+
+	void Start()
+	{
+		_rectTransform = GetComponent<RectTransform>();
+		_text = GetComponent<Text>();
+	}
+
 	void Update()
 	{
 		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
@@ -27,8 +36,7 @@ public class HyphenationJpn : MonoBehaviour
 	void UpdateText(string str)
 	{
 		// update Text
-		Text textComp = this.gameObject.GetComponent<Text>();
-		textComp.text = SetText(textComp, str);
+		_text.text = SetText(_text, str);
 	}
 	
 	public void SetText(string str)
@@ -44,7 +52,7 @@ public class HyphenationJpn : MonoBehaviour
 			return "";
 		}
 		
-		float w = textComp.GetComponent<RectTransform>().rect.width;
+		float w = _rectTransform.rect.width;
 		
 		// get space width
 		textComp.text = "m m";
@@ -131,23 +139,19 @@ public class HyphenationJpn : MonoBehaviour
 	// helper
 	public float textWidth{
 		set{
-			RectTransform rectTrans = this.GetComponent<RectTransform>();
-			rectTrans.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value);
+			_rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value);
 		}
 		get{
-			RectTransform rectTrans = this.GetComponent<RectTransform>();
-			return rectTrans.rect.width;
+			return _rectTransform.rect.width;
 		}
 	}
 	public int fontSize
 	{
 		set{
-			Text textComp = this.gameObject.GetComponent<Text>();
-			textComp.fontSize = value;
+			_text.fontSize = value;
 		}
 		get{
-			Text textComp = this.gameObject.GetComponent<Text>();
-			return textComp.fontSize;
+			return _text.fontSize;
 		}
 	}
 
