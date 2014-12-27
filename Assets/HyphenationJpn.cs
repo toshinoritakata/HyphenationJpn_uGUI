@@ -58,8 +58,8 @@ public class HyphenationJpn : UIBehaviour
 
 	string SetText(Text textComp, string msg)
 	{
-		if(msg == "" || msg == null){
-			return "";
+		if(string.IsNullOrEmpty(msg)){
+			return string.Empty;
 		}
 		
 		float w = _RectTransform.rect.width;
@@ -76,7 +76,7 @@ public class HyphenationJpn : UIBehaviour
 
 
 		// work
-		string str = "";
+		string str = string.Empty;
 
 		List<string> wordList = GetWordList(msg);
 		
@@ -108,15 +108,15 @@ public class HyphenationJpn : UIBehaviour
 	{
 		List<string> words = new List<string>();
 		
-		string word = "";
+		string word = string.Empty;
 		for(int j = 0; j < tmpText.Length; j ++){
 
 			string str = tmpText[j].ToString();//single Charactor
-			string nextStr = "";
+			string nextStr = string.Empty;
 			if(j < tmpText.Length-1){
 				nextStr = tmpText[j+1].ToString();
 			}
-			string preStr = "";
+			string preStr = string.Empty;
 			if(j > 0){
 				preStr = tmpText[j-1].ToString();
 			}
