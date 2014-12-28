@@ -7,6 +7,4 @@ unity4.6.1 mac
 
 Win未確認。コードの中で日本語使っているので、文字コードでエラーが起きるかも？
 
-HyphenationJpnをuGUIのTextにaddしてつかう。 Update内で禁則処理を行っているので、updateEditorOnlyをtrueで実行中に禁則処理を行わなくする。
-
-http://www.dizgid.com/blog/wp-content/uploads/unity3d/hyphenationJpn/index.html
+![image](https://dl.dropboxusercontent.com/u/56297224/UnitySumple2/%E7%A6%81%E5%89%87%E5%87%A6%E7%90%86/hyp.gif)
