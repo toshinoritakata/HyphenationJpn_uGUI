@@ -15,8 +15,6 @@ public class HyphenationJpn : UIBehaviour
 	[TextArea(3,10), SerializeField]
 	private string text;
 
-	public bool updateEditorOnly = true;
-
 	private RectTransform _RectTransform{
 		get{
 			if( _rectTransform == null )
@@ -38,16 +36,12 @@ public class HyphenationJpn : UIBehaviour
 	protected override void OnRectTransformDimensionsChange ()
 	{
 		base.OnRectTransformDimensionsChange();
-		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
-
 		UpdateText(text);
 	}
 
 	protected override void OnValidate()
 	{
 		base.OnValidate();
-		if (updateEditorOnly && Application.isPlaying){ return; } // run only editor
-		
 		UpdateText(text);
 	}
 
