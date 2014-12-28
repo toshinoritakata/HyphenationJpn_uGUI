@@ -72,6 +72,9 @@ public class HyphenationJpn : UIBehaviour
 
 	float GetTextWidth(Text textComp, string message)
 	{
+		if( _text.supportRichText ){
+			message = Regex.Replace(message, RITCH_TEXT_REPLACE, string.Empty);
+		}
 		textComp.text = message;
 		return textComp.preferredWidth;
 	}
@@ -128,7 +131,7 @@ public class HyphenationJpn : UIBehaviour
 
 			line.Append( currentCharacter );
 
-			if( ((IsLatin(currentCharacter) && IsLatin(preCharacter) ) &&(IsLatin(currentCharacter) && !IsLatin(preCharacter))) ||
+			if( ((IsLatin(currentCharacter) && IsLatin(preCharacter) ) && (IsLatin(currentCharacter) && !IsLatin(preCharacter))) ||
 			    (!IsLatin(currentCharacter) && CHECK_HYP_BACK(preCharacter)) ||
 			    (!IsLatin(nextCharacter) && !CHECK_HYP_FRONT(nextCharacter) && !CHECK_HYP_BACK(currentCharacter))||
 			    (characterCount == tmpText.Length - 1)){
@@ -183,7 +186,7 @@ public class HyphenationJpn : UIBehaviour
 		("abcdefghijklmnopqrstuvwxyz" +
 	     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 
 	     "0123456789" + 
-	     "<>().,").ToCharArray();
+	     "<>=/().,").ToCharArray();
 
 	private static bool CHECK_HYP_FRONT(char str)
 	{
