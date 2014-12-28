@@ -160,6 +160,11 @@ public class HyphenationJpn : UIBehaviour
 	}
 
 	// static
+	private readonly static string RITCH_TEXT_REPLACE = 
+		"(\\<color=.*\\>|</color>|" +
+		"\\<size=.n\\>|</size>|"+
+		"<b>|</b>|"+
+		"<i>|</i>)";
 
 	// 禁則処理 http://ja.wikipedia.org/wiki/%E7%A6%81%E5%89%87%E5%87%A6%E7%90%86
 	// 行頭禁則文字
