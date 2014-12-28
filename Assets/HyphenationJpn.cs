@@ -163,7 +163,7 @@ public class HyphenationJpn : UIBehaviour
 
 	// 禁則処理 http://ja.wikipedia.org/wiki/%E7%A6%81%E5%89%87%E5%87%A6%E7%90%86
 	// 行頭禁則文字
-	private static char[] HYP_FRONT = 
+	private readonly static char[] HYP_FRONT = 
 		(",)]｝、。）〕〉》」』】〙〗〟’”｠»" +// 終わり括弧類 簡易版
 		 "ァィゥェォッャュョヮヵヶっぁぃぅぇぉっゃゅょゎ" +//行頭禁則和字 
 		 "‐゠–〜ー" +//ハイフン類
@@ -171,10 +171,10 @@ public class HyphenationJpn : UIBehaviour
 		 "・:;" +//中点類
 		 "。.").ToCharArray();//句点類
 
-	private static char[] HYP_BACK = 
+	private readonly static char[] HYP_BACK = 
 		 "(（[｛〔〈《「『【〘〖〝‘“｟«".ToCharArray();//始め括弧類
 
-	private static char[] HYP_LATIN = 
+	private readonly static char[] HYP_LATIN = 
 		("abcdefghijklmnopqrstuvwxyz" +
 	     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 
 	     "0123456789" + 
