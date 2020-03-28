@@ -51,7 +51,7 @@ public class HyphenationJpn : UIBehaviour
 		_Text.text = GetFormatedText(_Text, str);
 	}
 	
-	public void GetText(string str)
+	public void SetText(string str)
 	{
 		text = str;
 		UpdateText(text);
@@ -89,11 +89,11 @@ public class HyphenationJpn : UIBehaviour
 		StringBuilder lineBuilder = new StringBuilder();
 
 		float lineWidth = 0;
-		foreach( var originalLine in GetWordList(msg))
+		foreach( var originalLine in GetWordList(Regex.Replace(msg, "\r\n", "\n")))
 		{
 			lineWidth += GetTextWidth(textComp, originalLine);
 
-			if( originalLine == Environment.NewLine ){
+			if( originalLine == "\n"){
 				lineWidth = 0;
 			}else{
 				if( originalLine == " " ){
@@ -128,7 +128,8 @@ public class HyphenationJpn : UIBehaviour
 			if( ((IsLatin(currentCharacter) && IsLatin(preCharacter) ) && (IsLatin(currentCharacter) && !IsLatin(preCharacter))) ||
 			    (!IsLatin(currentCharacter) && CHECK_HYP_BACK(preCharacter)) ||
 			    (!IsLatin(nextCharacter) && !CHECK_HYP_FRONT(nextCharacter) && !CHECK_HYP_BACK(currentCharacter))||
-			    (characterCount == tmpText.Length - 1)){
+			    (characterCount == tmpText.Length - 1) ||
+			    (currentCharacter == '\n')){
 				words.Add(line.ToString());
 				line = new StringBuilder();
 				continue;
