@@ -89,7 +89,7 @@ public class HyphenationJpn : UIBehaviour
 		StringBuilder lineBuilder = new StringBuilder();
 
 		float lineWidth = 0;
-		foreach( var originalLine in GetWordList(Regex.Replace(msg, "\r\n", "\n")))
+		foreach( var originalLine in GetWordList(Regex.Replace(msg, Environment.NewLine, "\n")))
 		{
 			lineWidth += GetTextWidth(textComp, originalLine);
 
